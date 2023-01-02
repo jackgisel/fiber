@@ -20,7 +20,7 @@ func init() {
 	db_port := os.Getenv("PGPORT")
 	db_user := os.Getenv("PGUSER")
 
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s", db_host, db_user, db_pass, db_name, db_port)
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=America/Los_Angeles", db_host, db_user, db_pass, db_name, db_port)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if (err != nil) {
@@ -65,7 +65,7 @@ func main() {
             return err
         }
 
-		newUser := User{Name: "Jinzhu"}
+		newUser := User{Name: user.Name}
 
 		result := DB.Create(&user)
 
