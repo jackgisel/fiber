@@ -45,6 +45,10 @@ func getPort() string {
 	return port
 }
 
+type User struct {
+    Name string `json:"name" xml:"name" form:"name"`
+}
+
 func main() {
 	app := fiber.New()
 
@@ -55,7 +59,21 @@ func main() {
 	})
 
 	app.Post("/user", func(c *fiber.Ctx) error {
-		return c.Send(c.Body())
+		user := new(User)
+
+		if err := c.BodyParser(user); err != nil {
+            return err
+        }
+
+		newUser := User{Name: "Jinzhu"}
+
+		result := DB.Create(&user)
+
+		if (result.Error != nil) {
+			log.Fatalln("Failed to create user")
+		}
+
+		return c.Send([]byte(newUser.Name))
 	})
 
 	app.Get("/users", func(c *fiber.Ctx) error {
