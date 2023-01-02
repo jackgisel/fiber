@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fiber/models"
 	"fmt"
 	"log"
 	"os"
@@ -28,6 +29,8 @@ func init() {
 		log.Println("Connected to the DB")
 	}
 
+	db.AutoMigrate(models.User{})
+
 	DB = db
 }
 
@@ -48,6 +51,24 @@ func main() {
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{
 			"message": "Hello, Railway!",
+		})
+	})
+
+	app.Post("/user", func(c *fiber.Ctx) error {
+		return c.Send(c.Body())
+	})
+
+	app.Get("/users", func(c *fiber.Ctx) error {
+		var users []models.User
+
+		result := DB.Find(&users)
+
+		if (result.Error != nil) {
+			log.Fatalln("Failed to query users")
+		}
+
+		return c.JSON(fiber.Map{
+				"users": users,
 		})
 	})
 
